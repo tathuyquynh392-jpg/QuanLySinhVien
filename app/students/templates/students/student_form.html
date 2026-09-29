@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% if student %}
+            Sửa sinh viên
+        {% else %}
+            Thêm sinh viên
+        {% endif %}
+    </title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .section {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 22px;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #1e3a8a;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .score-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .score-box label {
+            margin-bottom: 8px;
+        }
+
+        .gpa-result {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 18px;
+        }
+
+        .gpa-result p {
+            margin: 8px 0;
+        }
+
+        .gpa-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .actions {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+        }
+
+        .errors {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .errorlist {
+            color: #dc2626;
+            margin: 5px 0;
+            padding-left: 20px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .sections {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a href="{% url 'student_list' %}" class="back">
+        ← Quay lại danh sách
+    </a>
+
+    <div class="header">
+        <h1>
+            {% if student %}
+                Sửa thông tin sinh viên
+            {% else %}
+                Thêm sinh viên
+            {% endif %}
+        </h1>
+
+        <p>
+            Nhập thông tin cá nhân và điểm số của sinh viên
+        </p>
+    </div>
+
+
+    {% if form.errors %}
+        <div class="errors">
+            Vui lòng kiểm tra lại thông tin đã nhập.
+        </div>
+    {% endif %}
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="sections">
+
+            <!-- THÔNG TIN CÁ NHÂN -->
+
+            <div class="section">
+
+                <h2>Thông tin cá nhân</h2>
+
+                <div class="field">
+                    <label for="{{ form.student_code.id_for_label }}">
+                        Mã Sinh Viên
+                    </label>
+
+                    {{ form.student_code }}
+                    {{ form.student_code.errors }}
+                </div>
+
+
+                <div class="field">
+                    <label for="{{ form.full_name.id_for_label }}">
+                        Họ và Tên
+                    </label>
+
+                    {{ form.full_name }}
+                    {{ form.full_name.errors }}
+                </div>
+
+
+                <div class="field">
+                    <label for="{{ form.date_of_birth.id_for_label }}">
+                        Ngày Sinh
+                    </label>
+
+                    {{ form.date_of_birth }}
+                    {{ form.date_of_birth.errors }}
+                </div>
+
+
+                <div class="field">
+                    <label for="{{ form.gender.id_for_label }}">
+                        Giới Tính
+                    </label>
+
+                    {{ form.gender }}
+                    {{ form.gender.errors }}
+                </div>
+
+
+                <div class="field">
+                    <label for="{{ form.class_name.id_for_label }}">
+                        Lớp Học
+                    </label>
+
+                    {{ form.class_name }}
+                    {{ form.class_name.errors }}
+                </div>
+
+
+                <div class="field">
+                    <label for="{{ form.major.id_for_label }}">
+                        Khoa / Ngành
+                    </label>
+
+                    {{ form.major }}
+                    {{ form.major.errors }}
+                </div>
+
+
+                <div class="field">
+                    <label for="{{ form.email.id_for_label }}">
+                        Email Học Tập
+                    </label>
+
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+
+
+                <div class="field">
+                    <label for="{{ form.phone.id_for_label }}">
+                        Số điện thoại
+                    </label>
+
+                    {{ form.phone }}
+                    {{ form.phone.errors }}
+                </div>
+
+            </div>
+
+
+            <!-- ĐIỂM SỐ -->
+
+<div class="section">
+
+    <h2>Điểm số</h2>
+
+    <div class="score-box">
+        <div class="field">
+            <label for="{{ form.average_score.id_for_label }}">
+                Điểm trung bình hệ 10
+            </label>
+
+            {{ form.average_score }}
+            {{ form.average_score.errors }}
+        </div>
+    </div>
+
+    <div class="gpa-result">
+
+        <p>
+            Điểm hệ 10:
+            <span id="gpa10" class="gpa-value">-</span>
+        </p>
+
+        <p>
+            Điểm hệ 4:
+            <span id="gpa4" class="gpa-value">-</span>
+        </p>
+
+        <p>
+            Điểm chữ:
+            <span id="letterGrade" class="gpa-value">-</span>
+        </p>
+
+        <p>
+            Xếp loại:
+            <span id="classification" class="gpa-value">-</span>
+        </p>
+
+    </div>
+
+</div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <a
+                href="{% url 'student_list' %}"
+                class="btn btn-cancel"
+            >
+                Hủy
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-save"
+            >
+                Lưu sinh viên
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+    const averageInput = document.getElementById("id_average_score");
+
+    const gpa10 = document.getElementById("gpa10");
+    const gpa4 = document.getElementById("gpa4");
+    const letterGrade = document.getElementById("letterGrade");
+    const classification = document.getElementById("classification");
+
+
+    function calculateGPA() {
+
+        const average = parseFloat(averageInput.value);
+
+        if (isNaN(average)) {
+            gpa10.textContent = "-";
+            gpa4.textContent = "-";
+            letterGrade.textContent = "-";
+            classification.textContent = "-";
+            return;
+        }
+
+
+        // Điểm hệ 10
+        gpa10.textContent = average.toFixed(2);
+
+
+        // Quy đổi hệ 4 + điểm chữ + xếp loại
+        let score4;
+        let letter;
+        let result;
+
+
+        if (average >= 8.5) {
+            score4 = 4.0;
+            letter = "A";
+            result = "Xuất sắc";
+
+        } else if (average >= 7.0) {
+            score4 = 3.0;
+            letter = "B";
+            result = "Giỏi";
+
+        } else if (average >= 5.5) {
+            score4 = 2.0;
+            letter = "C";
+            result = "Khá";
+
+        } else if (average >= 4.0) {
+            score4 = 1.0;
+            letter = "D";
+            result = "Trung bình";
+
+        } else {
+            score4 = 0.0;
+            letter = "F";
+            result = "Không đạt";
+        }
+
+
+        gpa4.textContent = score4.toFixed(1);
+        letterGrade.textContent = letter;
+        classification.textContent = result;
+    }
+
+
+    averageInput.addEventListener("input", calculateGPA);
+
+    calculateGPA();
+</script>
+
+</body>
+</html>
