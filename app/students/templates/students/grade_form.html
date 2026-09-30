@@ -168,16 +168,40 @@
 
             {{ form.non_field_errors }}
 
-            <!-- SINH VIÊN -->
-            <div class="field">
+           <!-- KHOA -->
+<div class="field">
 
-                {{ form.student.label_tag }}
+    {{ form.major.label_tag }}
 
-                {{ form.student }}
+    {{ form.major }}
 
-                {{ form.student.errors }}
+    {{ form.major.errors }}
 
-            </div>
+</div>
+
+
+<!-- LỚP -->
+<div class="field">
+
+    {{ form.class_name.label_tag }}
+
+    {{ form.class_name }}
+
+    {{ form.class_name.errors }}
+
+</div>
+
+
+<!-- SINH VIÊN -->
+<div class="field">
+
+    {{ form.student.label_tag }}
+
+    {{ form.student }}
+
+    {{ form.student.errors }}
+
+</div>
 
             <!-- HỌC KỲ -->
             <div class="field">
@@ -274,6 +298,114 @@
 
 <script>
 
+    /* =========================
+       KHOA → LỚP → SINH VIÊN
+       ========================= */
+
+    const majorSelect =
+        document.getElementById("id_major");
+
+    const classSelect =
+        document.getElementById("id_class_name");
+
+    const studentSelect =
+        document.getElementById("id_student");
+
+
+    const classes = [
+        {% for class_obj in classes %}
+        {
+            name: "{{ class_obj.class_name|escapejs }}",
+            major: "{{ class_obj.major|escapejs }}"
+        },
+        {% endfor %}
+    ];
+
+
+    const students = [
+        {% for student in students %}
+        {
+            id: "{{ student.id }}",
+            name: "{{ student.full_name|escapejs }}",
+            code: "{{ student.student_code|escapejs }}",
+            class_name: "{{ student.class_name|escapejs }}",
+            major: "{{ student.major|escapejs }}"
+        },
+        {% endfor %}
+    ];
+
+
+    /* =========================
+       CHỌN KHOA → HIỆN LỚP
+       ========================= */
+
+    majorSelect.addEventListener("change", function () {
+
+        const selectedMajor = this.value;
+
+        classSelect.innerHTML =
+            '<option value="">— Chọn lớp —</option>';
+
+        studentSelect.innerHTML =
+            '<option value="">— Chọn sinh viên —</option>';
+
+        if (!selectedMajor) {
+            return;
+        }
+
+        classes
+            .filter(item => item.major === selectedMajor)
+            .forEach(item => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = item.name;
+                option.textContent = item.name;
+
+                classSelect.appendChild(option);
+            });
+    });
+
+
+    /* =========================
+       CHỌN LỚP → HIỆN SINH VIÊN
+       ========================= */
+
+    classSelect.addEventListener("change", function () {
+
+        const selectedClass = this.value;
+
+        studentSelect.innerHTML =
+            '<option value="">— Chọn sinh viên —</option>';
+
+        if (!selectedClass) {
+            return;
+        }
+
+        students
+            .filter(student =>
+                student.class_name === selectedClass
+            )
+            .forEach(student => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = student.id;
+
+                option.textContent =
+                    student.code + " - " + student.name;
+
+                studentSelect.appendChild(option);
+            });
+    });
+
+
+    /* =========================
+       TỰ ĐỘNG XẾP LOẠI
+       ========================= */
+
     const score10Input =
         document.getElementById("id_score_10");
 
@@ -293,7 +425,6 @@
             parseFloat(score10Input.value);
 
         let classification = "";
-
 
         if (isNaN(score10)) {
 
@@ -319,7 +450,6 @@
 
             classification = "Yếu";
         }
-
 
         classificationDisplay.value =
             classification;

@@ -167,28 +167,16 @@ def student_create(request):
 
 
 def student_edit(request, student_id):
-
-    student = get_object_or_404(
-        Student,
-        id=student_id
-    )
+    student = get_object_or_404(Student, id=student_id)
 
     if request.method == "POST":
-
-        form = StudentForm(
-            request.POST,
-            instance=student
-        )
+        form = StudentForm(request.POST, instance=student)
 
         if form.is_valid():
             form.save()
             return redirect("student_list")
-
     else:
-
-        form = StudentForm(
-            instance=student
-        )
+        form = StudentForm(instance=student)
 
     return render(
         request,
@@ -196,9 +184,8 @@ def student_edit(request, student_id):
         {
             "form": form,
             "student": student,
-        },
+        }
     )
-
 
 def student_delete(request, student_id):
 
@@ -230,13 +217,19 @@ def class_list(request):
 
     classes = Class.objects.all().order_by("class_code")
 
+    # Lọc theo khoa
     major = request.GET.get("major", "").strip()
 
     if major:
-        classes = classes.filter(
-            major=major
-        )
+        classes = classes.filter(major=major)
 
+    # Tính sĩ số từ danh sách sinh viên
+    for class_obj in classes:
+        class_obj.student_count = Student.objects.filter(
+            class_name=class_obj.class_name
+        ).count()
+
+    # Danh sách khoa
     majors = (
         Class.objects
         .values_list("major", flat=True)
@@ -374,6 +367,9 @@ def grade_create(request):
         "students/grade_form.html",
         {
             "form": form,
+            "classes": Class.objects.all().order_by("class_name"),
+            "students": Student.objects.all().order_by("student_code"),
+    
         },
     )
 
@@ -408,6 +404,8 @@ def grade_edit(request, grade_id):
         {
             "form": form,
             "grade": grade,
+            "classes": Class.objects.all().order_by("class_name"),
+"students": Student.objects.all().order_by("student_code"),
         },
     )
 
