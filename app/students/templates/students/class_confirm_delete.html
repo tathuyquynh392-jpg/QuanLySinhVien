@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Xóa lớp</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .box {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .delete {
+            background: #dc2626;
+            color: white;
+            padding: 11px 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .cancel {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 11px 20px;
+            border-radius: 7px;
+            text-decoration: none;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>⚠️ Xác nhận xóa lớp</h2>
+
+    <p>
+        Bạn có chắc muốn xóa lớp
+        <strong>{{ class_obj.class_code }}</strong>
+        -
+        <strong>{{ class_obj.class_name }}</strong>?
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button type="submit" class="delete">
+            Xóa lớp
+        </button>
+
+        <a href="{% url 'class_list' %}" class="cancel">
+            Hủy
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>

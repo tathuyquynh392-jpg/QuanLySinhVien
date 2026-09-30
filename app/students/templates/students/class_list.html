@@ -10,8 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Quản lý sinh viên</title>
-
+    <title>Quản lý lớp</title>
 
     <style>
 
@@ -19,28 +18,21 @@
             box-sizing: border-box;
         }
 
-
         body {
             margin: 0;
-
             font-family: Arial, sans-serif;
-
             background: #f4f7fb;
-
             color: #1f2937;
         }
-
 
         /* =========================
            SIDEBAR
         ========================= */
 
         .sidebar {
-
             width: 240px;
 
             position: fixed;
-
             top: 0;
             bottom: 0;
             left: 0;
@@ -52,11 +44,8 @@
             padding: 25px 16px;
         }
 
-
         .logo {
-
             font-size: 20px;
-
             font-weight: bold;
 
             color: #2563eb;
@@ -66,13 +55,10 @@
             line-height: 1.4;
         }
 
-
         .menu-title {
-
             color: #9ca3af;
 
             font-size: 12px;
-
             font-weight: bold;
 
             padding: 0 12px;
@@ -82,9 +68,7 @@
             text-transform: uppercase;
         }
 
-
         .menu-item {
-
             display: block;
 
             text-decoration: none;
@@ -100,10 +84,8 @@
             font-size: 14px;
         }
 
-
         .menu-item:hover,
         .menu-item.active {
-
             background: #eff6ff;
 
             color: #2563eb;
@@ -111,13 +93,11 @@
             font-weight: bold;
         }
 
-
         /* =========================
            MAIN
         ========================= */
 
         .main {
-
             margin-left: 240px;
 
             width: calc(100% - 240px);
@@ -125,13 +105,11 @@
             padding: 35px;
         }
 
-
         /* =========================
            HEADER
         ========================= */
 
         .topbar {
-
             display: flex;
 
             justify-content: space-between;
@@ -141,29 +119,23 @@
             margin-bottom: 25px;
         }
 
-
         .title h1 {
-
             margin: 0 0 7px;
 
             font-size: 28px;
         }
 
-
         .title p {
-
             margin: 0;
 
             color: #6b7280;
         }
-
 
         /* =========================
            BUTTON
         ========================= */
 
         .btn-add {
-
             display: inline-block;
 
             background: #2563eb;
@@ -181,19 +153,15 @@
             font-weight: bold;
         }
 
-
         .btn-add:hover {
-
             background: #1d4ed8;
         }
 
-
         /* =========================
-           TABLE CARD
+           TABLE
         ========================= */
 
         .table-card {
-
             background: white;
 
             border: 1px solid #e5e7eb;
@@ -203,9 +171,7 @@
             overflow: hidden;
         }
 
-
         .table-header {
-
             padding: 20px 22px;
 
             border-bottom: 1px solid #e5e7eb;
@@ -215,13 +181,11 @@
             font-weight: bold;
         }
 
-
         /* =========================
            TOOLBAR
         ========================= */
 
         .toolbar {
-
             display: flex;
 
             gap: 12px;
@@ -233,9 +197,7 @@
             background: #fafbfc;
         }
 
-
         .search-box {
-
             flex: 1;
 
             padding: 10px 13px;
@@ -249,15 +211,11 @@
             font-size: 14px;
         }
 
-
         .search-box:focus {
-
             border-color: #2563eb;
         }
 
-
         .filter-select {
-
             padding: 10px 13px;
 
             border: 1px solid #d1d5db;
@@ -271,27 +229,21 @@
             outline: none;
         }
 
-
         /* =========================
            TABLE
         ========================= */
 
         table {
-
             width: 100%;
 
             border-collapse: collapse;
         }
 
-
         thead {
-
             background: #f8fafc;
         }
 
-
         th {
-
             text-align: left;
 
             padding: 14px 18px;
@@ -303,9 +255,7 @@
             border-bottom: 1px solid #e5e7eb;
         }
 
-
         td {
-
             padding: 15px 18px;
 
             font-size: 14px;
@@ -313,27 +263,21 @@
             border-bottom: 1px solid #f1f5f9;
         }
 
-
         tbody tr:hover {
-
             background: #f8fafc;
         }
-
 
         /* =========================
            ACTIONS
         ========================= */
 
         .actions {
-
             display: flex;
 
             gap: 8px;
         }
 
-
         .btn-edit {
-
             text-decoration: none;
 
             background: #eff6ff;
@@ -349,9 +293,7 @@
             font-weight: bold;
         }
 
-
         .btn-delete {
-
             border: none;
 
             background: #fef2f2;
@@ -369,32 +311,25 @@
             cursor: pointer;
         }
 
-
-        .btn-delete:hover {
-
-            background: #fee2e2;
-        }
-
-
         .btn-edit:hover {
-
             background: #dbeafe;
         }
 
+        .btn-delete:hover {
+            background: #fee2e2;
+        }
 
         /* =========================
            EMPTY
         ========================= */
 
         .empty {
-
             text-align: center;
 
             padding: 45px;
 
             color: #9ca3af;
         }
-
 
         /* =========================
            RESPONSIVE
@@ -403,13 +338,10 @@
         @media (max-width: 900px) {
 
             .sidebar {
-
                 width: 200px;
             }
 
-
             .main {
-
                 margin-left: 200px;
 
                 width: calc(100% - 200px);
@@ -417,9 +349,7 @@
                 padding: 20px;
             }
 
-
             .topbar {
-
                 align-items: flex-start;
 
                 gap: 15px;
@@ -427,24 +357,17 @@
                 flex-direction: column;
             }
 
-
             .toolbar {
-
                 flex-direction: column;
             }
 
-
             .table-card {
-
                 overflow-x: auto;
             }
 
-
             table {
-
-                min-width: 900px;
+                min-width: 700px;
             }
-
         }
 
     </style>
@@ -461,20 +384,14 @@
 
 <aside class="sidebar">
 
-
     <div class="logo">
-
         🎓 QUẢN LÝ<br>
-
         &nbsp;&nbsp;&nbsp;SINH VIÊN
-
     </div>
 
 
     <div class="menu-title">
-
         Quản lý
-
     </div>
 
 
@@ -488,7 +405,7 @@
 
     <a
         href="{% url 'student_list' %}"
-        class="menu-item active"
+        class="menu-item"
     >
         👨‍🎓 Sinh viên
     </a>
@@ -496,7 +413,7 @@
 
     <a
         href="{% url 'class_list' %}"
-        class="menu-item"
+        class="menu-item active"
     >
         🏫 Lớp
     </a>
@@ -509,7 +426,6 @@
         📝 Điểm số
     </a>
 
-
 </aside>
 
 
@@ -520,29 +436,27 @@
 <main class="main">
 
 
-    <!-- HEADER -->
-
     <div class="topbar">
 
 
         <div class="title">
 
             <h1>
-                Quản lý sinh viên
+                Quản lý lớp
             </h1>
 
             <p>
-                Quản lý thông tin sinh viên trong hệ thống
+                Quản lý thông tin các lớp học trong hệ thống
             </p>
 
         </div>
 
 
         <a
-            href="{% url 'student_create' %}"
+            href="{% url 'class_create' %}"
             class="btn-add"
         >
-            + Thêm sinh viên
+            + Thêm lớp
         </a>
 
 
@@ -557,9 +471,7 @@
 
 
         <div class="table-header">
-
-            Danh sách sinh viên
-
+            Danh sách lớp
         </div>
 
 
@@ -572,7 +484,7 @@
                 type="text"
                 id="searchInput"
                 class="search-box"
-                placeholder="Tìm kiếm mã sinh viên, họ tên, email..."
+                placeholder="Tìm kiếm mã lớp, tên lớp, khoa..."
             >
 
 
@@ -605,7 +517,9 @@
         </div>
 
 
-        <!-- TABLE -->
+        <!-- =========================
+             TABLE
+        ========================= -->
 
         <table>
 
@@ -619,39 +533,15 @@
                     </th>
 
                     <th>
-                        Mã sinh viên
+                        Mã lớp
                     </th>
 
                     <th>
-                        Họ và tên
+                        Tên lớp
                     </th>
 
                     <th>
-                        Ngày sinh
-                    </th>
-
-                    <th>
-                        Giới tính
-                    </th>
-
-                    <th>
-                        Lớp
-                    </th>
-
-                    <th>
-                        Khoa / Ngành
-                    </th>
-
-                    <th>
-                        Email
-                    </th>
-
-                    <th>
-                        Điện thoại
-                    </th>
-
-                    <th>
-                        Điểm TB
+                        Khoa
                     </th>
 
                     <th>
@@ -663,12 +553,12 @@
             </thead>
 
 
-            <tbody id="studentTableBody">
+            <tbody>
 
 
-                {% for student in students %}
+                {% for class in classes %}
 
-                    <tr class="student-row">
+                    <tr class="class-row">
 
 
                         <td>
@@ -677,59 +567,21 @@
 
 
                         <td>
+
                             <strong>
-                                {{ student.student_code }}
+                                {{ class.class_code }}
                             </strong>
+
                         </td>
 
 
                         <td>
-                            {{ student.full_name }}
+                            {{ class.class_name }}
                         </td>
 
 
                         <td>
-                            {{ student.date_of_birth|date:"d/m/Y" }}
-                        </td>
-
-
-                        <td>
-                            {{ student.gender }}
-                        </td>
-
-
-                        <td>
-                            {{ student.class_name }}
-                        </td>
-
-
-                        <td>
-                            {{ student.major }}
-                        </td>
-
-
-                        <td>
-                            {{ student.email }}
-                        </td>
-
-
-                        <td>
-                            {{ student.phone }}
-                        </td>
-
-
-                        <td>
-
-                            {% if student.average_score is not None %}
-
-                                {{ student.average_score }}
-
-                            {% else %}
-
-                                -
-
-                            {% endif %}
-
+                            {{ class.major }}
                         </td>
 
 
@@ -739,7 +591,7 @@
 
 
                                 <a
-                                    href="{% url 'student_edit' student.id %}"
+                                    href="{% url 'class_edit' class.id %}"
                                     class="btn-edit"
                                 >
                                     Sửa
@@ -748,7 +600,7 @@
 
                                 <form
                                     method="post"
-                                    action="{% url 'student_delete' student.id %}"
+                                    action="{% url 'class_delete' class.id %}"
                                     style="display:inline;"
                                 >
 
@@ -757,7 +609,7 @@
                                     <button
                                         type="submit"
                                         class="btn-delete"
-                                        onclick="return confirm('Bạn có chắc muốn xóa sinh viên này không?');"
+                                        onclick="return confirm('Bạn có chắc muốn xóa lớp này không?');"
                                     >
                                         Xóa
                                     </button>
@@ -778,10 +630,10 @@
                     <tr>
 
                         <td
-                            colspan="11"
+                            colspan="5"
                             class="empty"
                         >
-                            Chưa có sinh viên nào.
+                            Chưa có lớp nào.
                         </td>
 
                     </tr>
@@ -803,7 +655,6 @@
 
 <script>
 
-
     /* =========================
        TÌM KIẾM
     ========================= */
@@ -821,7 +672,7 @@
 
 
             const rows =
-                document.querySelectorAll(".student-row");
+                document.querySelectorAll(".class-row");
 
 
             rows.forEach(
@@ -866,19 +717,18 @@
             if (major) {
 
                 window.location.href =
-                    "{% url 'student_list' %}?major="
+                    "{% url 'class_list' %}?major="
                     + encodeURIComponent(major);
 
             } else {
 
                 window.location.href =
-                    "{% url 'student_list' %}";
+                    "{% url 'class_list' %}";
 
             }
 
         }
     );
-
 
 </script>
 

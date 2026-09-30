@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Xóa điểm</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .box {
+            max-width: 500px;
+            margin: 120px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .danger {
+            color: #dc2626;
+        }
+
+        button,
+        a {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 7px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button {
+            background: #dc2626;
+            color: white;
+        }
+
+        a {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2 class="danger">
+        Xác nhận xóa điểm
+    </h2>
+
+    <p>
+        Bạn có chắc muốn xóa điểm
+        <strong>{{ grade.score }}</strong>
+        của
+        <strong>{{ grade.student.full_name }}</strong>?
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Xóa
+        </button>
+
+        <a href="{% url 'grade_list' %}">
+            Hủy
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

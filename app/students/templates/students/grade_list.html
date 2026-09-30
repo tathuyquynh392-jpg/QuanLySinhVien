@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quản lý điểm số</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .sidebar {
+            width: 240px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            padding: 25px 16px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2563eb;
+            padding: 0 12px 30px;
+            line-height: 1.4;
+        }
+
+        .menu-title {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 0 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .menu-item {
+            display: block;
+            text-decoration: none;
+            color: #4b5563;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .main {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            padding: 35px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .title h1 {
+            margin: 0 0 7px;
+            font-size: 28px;
+        }
+
+        .title p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .btn-add {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-add:hover {
+            background: #1d4ed8;
+        }
+
+        .table-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .toolbar {
+            padding: 18px 22px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #fafbfc;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            border-color: #2563eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: #6b7280;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 15px 18px;
+            font-size: 14px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit {
+            text-decoration: none;
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 7px 11px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .btn-delete {
+            border: none;
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 7px 11px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-edit:hover {
+            background: #dbeafe;
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px;
+            color: #9ca3af;
+        }
+        /* Căn đều bảng điểm */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+th,
+td {
+    vertical-align: middle;
+}
+
+th:nth-child(1) {
+    width: 5%;
+}
+
+th:nth-child(2) {
+    width: 14%;
+}
+
+th:nth-child(3) {
+    width: 17%;
+}
+
+th:nth-child(4) {
+    width: 9%;
+}
+
+th:nth-child(5) {
+    width: 11%;
+}
+
+th:nth-child(6) {
+    width: 11%;
+}
+
+th:nth-child(7) {
+    width: 11%;
+}
+
+th:nth-child(8) {
+    width: 12%;
+}
+
+th:nth-child(9) {
+    width: 10%;
+}
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 20px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .table-card {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 750px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="logo">
+        🎓 QUẢN LÝ<br>
+        &nbsp;&nbsp;&nbsp;SINH VIÊN
+    </div>
+
+    <div class="menu-title">
+        Quản lý
+    </div>
+
+    <a href="{% url 'dashboard' %}" class="menu-item">
+        📊 Thống kê
+    </a>
+
+    <a href="{% url 'student_list' %}" class="menu-item">
+        👨‍🎓 Sinh viên
+    </a>
+
+    <a href="{% url 'class_list' %}" class="menu-item">
+        🏫 Lớp
+    </a>
+
+    <a href="{% url 'grade_list' %}" class="menu-item active">
+        📝 Điểm số
+    </a>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div class="title">
+
+            <h1>
+                Quản lý điểm số
+            </h1>
+
+            <p>
+                Quản lý điểm học tập của sinh viên
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'grade_create' %}"
+            class="btn-add"
+        >
+            + Thêm điểm
+        </a>
+
+    </div>
+
+
+    <div class="table-card">
+
+        <div class="table-header">
+            Danh sách điểm số
+        </div>
+
+
+        <div class="toolbar">
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search-box"
+                placeholder="Tìm kiếm..."
+            >
+
+        </div>
+
+
+        <table>
+
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã sinh viên</th>
+            <th>Họ và tên</th>
+            <th>Học kỳ</th>
+            <th>Năm học</th>
+            <th>Điểm hệ 10</th>
+            <th>Điểm hệ 4</th>
+            <th>Xếp loại</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for grade in grades %}
+
+        <tr class="grade-row">
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+            <td>
+                <strong>{{ grade.student.student_code }}</strong>
+            </td>
+
+            <td>
+                {{ grade.student.full_name }}
+            </td>
+
+            <td>
+                {{ grade.semester }}
+            </td>
+
+            <td>
+                {{ grade.academic_year }}
+            </td>
+
+            <td>
+                {{ grade.score_10 }}
+            </td>
+
+            <td>
+                {{ grade.score_4 }}
+            </td>
+
+            <td>
+                <strong>
+                    {{ grade.classification }}
+                </strong>
+            </td>
+
+            <td>
+                <div class="actions">
+
+                    <a
+                        href="{% url 'grade_edit' grade.id %}"
+                        class="btn-edit"
+                    >
+                        Sửa
+                    </a>
+
+                    <a
+                        href="{% url 'grade_delete' grade.id %}"
+                        class="btn-delete"
+                    >
+                        Xóa
+                    </a>
+
+                </div>
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="9" class="empty">
+                Chưa có dữ liệu điểm số
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+    </div>
+
+</main>
+
+
+<script>
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            const keyword =
+                this.value.toLowerCase().trim();
+
+            const rows =
+                document.querySelectorAll(".grade-row");
+
+            rows.forEach(
+                function (row) {
+
+                    const text =
+                        row.textContent.toLowerCase();
+
+                    row.style.display =
+                        text.includes(keyword)
+                            ? ""
+                            : "none";
+                }
+            );
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

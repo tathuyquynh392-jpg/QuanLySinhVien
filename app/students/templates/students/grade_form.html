@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% if grade %}
+            Sửa điểm
+        {% else %}
+            Thêm điểm
+        {% endif %}
+    </title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .main {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 50px 25px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        /* Điểm hệ 10 + hệ 4 nằm cùng một hàng */
+        .score-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .classification-box {
+            background: #f8fafc;
+        }
+
+        .classification-box input {
+            background: #f3f4f6;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 11px 18px;
+            border-radius: 7px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+        }
+
+        .errorlist {
+            color: #dc2626;
+            padding-left: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .score-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<main class="main">
+
+    <a
+        href="{% url 'grade_list' %}"
+        class="back"
+    >
+        ← Quay lại danh sách điểm
+    </a>
+
+    <h1>
+        {% if grade %}
+            Sửa điểm
+        {% else %}
+            Thêm điểm
+        {% endif %}
+    </h1>
+
+    <div class="subtitle">
+        Nhập thông tin điểm của sinh viên
+    </div>
+
+    <div class="card">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            <!-- SINH VIÊN -->
+            <div class="field">
+
+                {{ form.student.label_tag }}
+
+                {{ form.student }}
+
+                {{ form.student.errors }}
+
+            </div>
+
+            <!-- HỌC KỲ -->
+            <div class="field">
+
+                {{ form.semester.label_tag }}
+
+                {{ form.semester }}
+
+                {{ form.semester.errors }}
+
+            </div>
+
+            <!-- NĂM HỌC -->
+            <div class="field">
+
+                {{ form.academic_year.label_tag }}
+
+                {{ form.academic_year }}
+
+                {{ form.academic_year.errors }}
+
+            </div>
+
+            <!-- ĐIỂM -->
+            <div class="score-row">
+
+                <div class="field">
+
+                    {{ form.score_10.label_tag }}
+
+                    {{ form.score_10 }}
+
+                    {{ form.score_10.errors }}
+
+                </div>
+
+                <div class="field">
+
+                    {{ form.score_4.label_tag }}
+
+                    {{ form.score_4 }}
+
+                    {{ form.score_4.errors }}
+
+                </div>
+
+            </div>
+
+            <!-- XẾP LOẠI TỰ ĐỘNG -->
+            <div class="field classification-box">
+
+                <label for="classification_display">
+                    Xếp loại
+                </label>
+
+                <input
+                    type="text"
+                    id="classification_display"
+                    value="{{ form.classification.value|default:'' }}"
+                    readonly
+                    placeholder="Nhập điểm hệ 10 để tự động xếp loại"
+                >
+
+                {{ form.classification.as_hidden }}
+
+                {{ form.classification.errors }}
+
+            </div>
+
+            <div class="buttons">
+
+                <a
+                    href="{% url 'grade_list' %}"
+                    class="btn btn-cancel"
+                >
+                    Hủy
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-save"
+                >
+                    Lưu
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    const score10Input =
+        document.getElementById("id_score_10");
+
+    const score4Input =
+        document.getElementById("id_score_4");
+
+    const classificationDisplay =
+        document.getElementById("classification_display");
+
+    const classificationInput =
+        document.getElementById("id_classification");
+
+
+    function calculateClassification() {
+
+        const score10 =
+            parseFloat(score10Input.value);
+
+        let classification = "";
+
+
+        if (isNaN(score10)) {
+
+            classification = "";
+
+        } else if (score10 >= 8.5) {
+
+            classification = "Xuất sắc";
+
+        } else if (score10 >= 7) {
+
+            classification = "Giỏi";
+
+        } else if (score10 >= 5.5) {
+
+            classification = "Khá";
+
+        } else if (score10 >= 4) {
+
+            classification = "Trung bình";
+
+        } else {
+
+            classification = "Yếu";
+        }
+
+
+        classificationDisplay.value =
+            classification;
+
+        classificationInput.value =
+            classification;
+    }
+
+
+    score10Input.addEventListener(
+        "input",
+        function () {
+
+            if (parseFloat(this.value) < 0) {
+                this.value = 0;
+            }
+
+            if (parseFloat(this.value) > 10) {
+                this.value = 10;
+            }
+
+            calculateClassification();
+        }
+    );
+
+
+    score4Input.addEventListener(
+        "input",
+        function () {
+
+            if (parseFloat(this.value) < 0) {
+                this.value = 0;
+            }
+
+            if (parseFloat(this.value) > 4) {
+                this.value = 4;
+            }
+        }
+    );
+
+
+    calculateClassification();
+
+</script>
+
+</body>
+
+</html>
