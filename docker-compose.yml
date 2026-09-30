@@ -13,11 +13,12 @@ services:
       - "8000"
 
     environment:
-      DB_NAME: student_db
-      DB_USER: student_user
-      DB_PASSWORD: Student@2026Strong
-      DB_HOST: mysql
-      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
 
     depends_on:
       mysql:
@@ -34,10 +35,10 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_DATABASE: student_db
-      MYSQL_USER: student_user
-      MYSQL_PASSWORD: Student@2026Strong
-      MYSQL_ROOT_PASSWORD: Root@2026Strong
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
     volumes:
       - mysql_data:/var/lib/mysql
