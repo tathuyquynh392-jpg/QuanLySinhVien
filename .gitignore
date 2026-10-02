@@ -5,3 +5,4 @@ __pycache__/
 # SSL private files
 nginx/ssl/*.key
 nginx/ssl/*.crt
+monitoring/.my.cnf

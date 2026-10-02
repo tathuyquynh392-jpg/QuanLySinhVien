@@ -83,6 +83,8 @@ class Class(models.Model):
 
     def __str__(self):
         return f"{self.class_code} - {self.class_name}"
+
+
 class Grade(models.Model):
 
     CLASSIFICATION_CHOICES = [
@@ -91,6 +93,7 @@ class Grade(models.Model):
         ("Khá", "Khá"),
         ("Trung bình", "Trung bình"),
         ("Yếu", "Yếu"),
+        ("Kém", "Kém"),
     ]
 
     student = models.ForeignKey(
@@ -106,58 +109,71 @@ class Grade(models.Model):
     )
 
     academic_year = models.CharField(
-    max_length=20,
-    default="2025-2026",
-    verbose_name="Năm học"
-)
+        max_length=20,
+        default="2025-2026",
+        verbose_name="Năm học"
+    )
 
+    # Điểm hệ 10
     score_10 = models.DecimalField(
-    max_digits=4,
-    decimal_places=2,
-    default=0,
-    validators=[
-        MinValueValidator(0),
-        MaxValueValidator(10),
-    ],
-    verbose_name="Điểm hệ 10"
-)
+        max_digits=4,
+        decimal_places=2,
+        default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(10),
+        ],
+        verbose_name="Điểm hệ 10"
+    )
 
+    # Điểm hệ 4
     score_4 = models.DecimalField(
-    max_digits=3,
-    decimal_places=2,
-    default=0,
-    validators=[
-        MinValueValidator(0),
-        MaxValueValidator(4),
-    ],
-    verbose_name="Điểm hệ 4"
-)
+        max_digits=3,
+        decimal_places=2,
+        default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(4),
+        ],
+        verbose_name="Điểm hệ 4"
+    )
 
+    # Xếp loại
     classification = models.CharField(
-    max_length=20,
-    choices=CLASSIFICATION_CHOICES,
-    default="Khá",
-    verbose_name="Xếp loại"
-)
-def save(self, *args, **kwargs):
+        max_length=20,
+        choices=CLASSIFICATION_CHOICES,
+        default="Kém",
+        verbose_name="Xếp loại"
+    )
 
-    if self.score_10 is not None:
+    def save(self, *args, **kwargs):
 
-        if self.score_10 >= 8.5:
-            self.classification = "Xuất sắc"
+    # XẾP LOẠI DỰA HOÀN TOÀN VÀO ĐIỂM HỆ 4
+        if self.score_4 is not None:
 
-        elif self.score_10 >= 7:
-            self.classification = "Giỏi"
+            if self.score_4 >= 3.60:
+                self.classification = "Xuất sắc"
 
-        elif self.score_10 >= 5.5:
-            self.classification = "Khá"
+            elif self.score_4 >= 3.20:
+                self.classification = "Giỏi"
 
-        elif self.score_10 >= 4:
-            self.classification = "Trung bình"
+            elif self.score_4 >= 2.50:
+                self.classification = "Khá"
 
-        else:
-            self.classification = "Yếu"
+            elif self.score_4 >= 2.00:
+                self.classification = "Trung bình"
 
-    super().save(*args, **kwargs)
+            elif self.score_4 >= 1.00:
+                self.classification = "Yếu"
+
+            else:
+                self.classification = "Kém"
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.student.full_name} - {self.semester} - {self.academic_year}"
+        return (
+            f"{self.student.full_name} - "
+            f"{self.semester} - "
+            f"{self.academic_year}"
+        )

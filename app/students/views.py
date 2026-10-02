@@ -4,6 +4,32 @@ from django.db.models import Avg, Count
 from .forms import StudentForm, ClassForm, GradeForm
 from .models import Student, Class, Grade
 
+import requests
+
+
+# =========================================================
+# PROMETHEUS
+# =========================================================
+
+def get_prometheus_value(query):
+    try:
+        response = requests.get(
+            "http://prometheus:9090/api/v1/query",
+            params={"query": query},
+            timeout=3
+        )
+
+        data = response.json()
+        result = data.get("data", {}).get("result", [])
+
+        if result:
+            return float(result[0]["value"][1])
+
+    except Exception:
+        pass
+
+    return 0
+
 
 # =========================================================
 # THỐNG KÊ / DASHBOARD
@@ -11,51 +37,60 @@ from .models import Student, Class, Grade
 
 def dashboard(request):
 
-    # Tổng số sinh viên
     total_students = Student.objects.count()
 
-    # Tổng số lớp
     class_count = Class.objects.count()
 
-    # Điểm trung bình
-    average_score = Student.objects.aggregate(
-        avg=Avg("average_score")
+    # Điểm trung bình hệ 4
+    average_score = Grade.objects.aggregate(
+        avg=Avg("score_4")
     )["avg"]
 
-    # Phân loại học lực
-    excellent_count = Student.objects.filter(
-        average_score__gte=8.5
+    # Thống kê xếp loại
+    excellent_count = Grade.objects.filter(
+        classification="Xuất sắc"
     ).count()
 
-    good_count = Student.objects.filter(
-        average_score__gte=7,
-        average_score__lt=8.5
+    good_count = Grade.objects.filter(
+        classification="Giỏi"
     ).count()
 
-    average_count = Student.objects.filter(
-        average_score__gte=5,
-        average_score__lt=7
+    fair_count = Grade.objects.filter(
+        classification="Khá"
     ).count()
 
-    weak_count = Student.objects.filter(
-        average_score__lt=5
+    average_count = Grade.objects.filter(
+        classification="Trung bình"
+    ).count()
+
+    weak_count = Grade.objects.filter(
+        classification="Yếu"
+    ).count()
+
+    poor_count = Grade.objects.filter(
+        classification="Kém"
     ).count()
 
     # Sinh viên theo khoa
+    
     students_by_major = list(
         Student.objects
-        .values("major")
-        .annotate(total=Count("id"))
-        .order_by("-total")
+            .values("major")
+            .annotate(total=Count("id"))
+            .order_by("major")
     )
 
-    # Dữ liệu phân loại học lực
-    score_distribution = {
-        "excellent": excellent_count,
-        "good": good_count,
-        "average": average_count,
-        "weak": weak_count,
-    }
+
+
+    # CPU
+    cpu_usage = get_prometheus_value(
+        "sum(rate(container_cpu_usage_seconds_total{name!=''}[5m])) * 100"
+    )
+
+    # RAM
+    ram_usage = get_prometheus_value(
+        "sum(container_memory_usage_bytes{name!=''}) / 1024 / 1024"
+    )
 
     return render(
         request,
@@ -63,49 +98,28 @@ def dashboard(request):
         {
             "total_students": total_students,
             "class_count": class_count,
-            "average_score": average_score,
 
+            # Điểm trung bình hệ 4
+            "average_score": (
+                round(float(average_score), 2)
+                if average_score is not None
+                else 0
+            ),
+
+            # Xếp loại
             "excellent_count": excellent_count,
             "good_count": good_count,
+            "fair_count": fair_count,
             "average_count": average_count,
             "weak_count": weak_count,
+            "poor_count": poor_count,
 
+            # Sinh viên theo khoa
             "students_by_major": students_by_major,
 
-            # QUAN TRỌNG
-            "score_distribution": score_distribution,
-        },
-    )
-
-    # Sinh viên theo khoa
-    students_by_major = list(
-    Student.objects
-    .values("major")
-    .annotate(total=Count("id"))
-    .order_by("-total")
-)
-
-    score_distribution = {
-    "excellent": excellent_count,
-    "good": good_count,
-    "average": average_count,
-    "weak": weak_count,
-}
-
-    return render(
-        request,
-        "students/dashboard.html",
-        {
-            "total_students": total_students,
-            "class_count": class_count,
-            "average_score": average_score,
-
-            "excellent_count": excellent_count,
-            "good_count": good_count,
-            "average_count": average_count,
-            "weak_count": weak_count,
-
-            "students_by_major": students_by_major,
+            # Tải máy chủ
+            "cpu_usage": round(cpu_usage, 1),
+            "ram_usage": round(ram_usage, 1),
         },
     )
 
@@ -154,7 +168,6 @@ def student_create(request):
             return redirect("student_list")
 
     else:
-
         form = StudentForm()
 
     return render(
@@ -167,16 +180,28 @@ def student_create(request):
 
 
 def student_edit(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
+
+    student = get_object_or_404(
+        Student,
+        id=student_id
+    )
 
     if request.method == "POST":
-        form = StudentForm(request.POST, instance=student)
+
+        form = StudentForm(
+            request.POST,
+            instance=student
+        )
 
         if form.is_valid():
             form.save()
             return redirect("student_list")
+
     else:
-        form = StudentForm(instance=student)
+
+        form = StudentForm(
+            instance=student
+        )
 
     return render(
         request,
@@ -186,6 +211,7 @@ def student_edit(request, student_id):
             "student": student,
         }
     )
+
 
 def student_delete(request, student_id):
 
@@ -223,8 +249,9 @@ def class_list(request):
     if major:
         classes = classes.filter(major=major)
 
-    # Tính sĩ số từ danh sách sinh viên
+    # Tính sĩ số
     for class_obj in classes:
+
         class_obj.student_count = Student.objects.filter(
             class_name=class_obj.class_name
         ).count()
@@ -325,11 +352,14 @@ def class_delete(request, class_id):
             "class_obj": class_obj,
         },
     )
+
+
 # =========================================================
 # QUẢN LÝ ĐIỂM SỐ
 # =========================================================
 
 def grade_list(request):
+
     grades = (
         Grade.objects
         .select_related("student")
@@ -348,14 +378,26 @@ def grade_list(request):
         },
     )
 
+
+# =========================================================
+# THÊM ĐIỂM
+# =========================================================
+
 def grade_create(request):
+
+    # Lấy dữ liệu cho JavaScript
+    classes = Class.objects.all().order_by("class_name")
+
+    students = Student.objects.all().order_by("student_code")
 
     if request.method == "POST":
 
         form = GradeForm(request.POST)
 
         if form.is_valid():
+
             form.save()
+
             return redirect("grade_list")
 
     else:
@@ -367,12 +409,33 @@ def grade_create(request):
         "students/grade_form.html",
         {
             "form": form,
-            "classes": Class.objects.all().order_by("class_name"),
-            "students": Student.objects.all().order_by("student_code"),
-    
+
+            # QuerySet → list(dict)
+            # để json_script có thể chuyển thành JSON
+            "classes": list(
+                classes.values(
+                    "id",
+                    "class_name",
+                    "major"
+                )
+            ),
+
+            "students": list(
+                students.values(
+                    "id",
+                    "student_code",
+                    "full_name",
+                    "class_name",
+                    "major"
+                )
+            ),
         },
     )
 
+
+# =========================================================
+# SỬA ĐIỂM
+# =========================================================
 
 def grade_edit(request, grade_id):
 
@@ -380,6 +443,11 @@ def grade_edit(request, grade_id):
         Grade,
         id=grade_id
     )
+
+    # Dữ liệu cho JavaScript
+    classes = Class.objects.all().order_by("class_name")
+
+    students = Student.objects.all().order_by("student_code")
 
     if request.method == "POST":
 
@@ -389,7 +457,9 @@ def grade_edit(request, grade_id):
         )
 
         if form.is_valid():
+
             form.save()
+
             return redirect("grade_list")
 
     else:
@@ -403,12 +473,34 @@ def grade_edit(request, grade_id):
         "students/grade_form.html",
         {
             "form": form,
+
             "grade": grade,
-            "classes": Class.objects.all().order_by("class_name"),
-"students": Student.objects.all().order_by("student_code"),
+
+            # Chuyển QuerySet thành list để json_script sử dụng
+            "classes": list(
+                classes.values(
+                    "id",
+                    "class_name",
+                    "major"
+                )
+            ),
+
+            "students": list(
+                students.values(
+                    "id",
+                    "student_code",
+                    "full_name",
+                    "class_name",
+                    "major"
+                )
+            ),
         },
     )
 
+
+# =========================================================
+# XÓA ĐIỂM
+# =========================================================
 
 def grade_delete(request, grade_id):
 

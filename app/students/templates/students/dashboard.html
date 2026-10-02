@@ -165,6 +165,74 @@
         }
 
         /* =========================
+           SERVER LOAD
+        ========================= */
+
+        .server-load {
+            background: white;
+
+            padding: 22px;
+
+            border-radius: 12px;
+
+            border: 1px solid #e5e7eb;
+
+            margin-bottom: 25px;
+
+            grid-column: 1 / -1;
+        }
+
+        .server-load h3 {
+            margin: 0 0 20px;
+
+            font-size: 17px;
+        }
+
+        .server-item {
+            margin-bottom: 18px;
+        }
+
+        .server-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .server-label {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 8px;
+
+            font-size: 14px;
+        }
+
+        .server-label strong {
+            color: #2563eb;
+        }
+
+        .server-bar {
+            width: 100%;
+
+            height: 10px;
+
+            background: #e5e7eb;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+        .server-bar-fill {
+            height: 100%;
+
+            background: #2563eb;
+
+            border-radius: 10px;
+        }
+
+        /* =========================
            CHART GRID
         ========================= */
 
@@ -334,6 +402,8 @@
     <div class="stats">
 
 
+        <!-- TỔNG SINH VIÊN -->
+
         <div class="card">
 
             <div class="card-title">
@@ -346,6 +416,8 @@
 
         </div>
 
+
+        <!-- TỔNG SỐ LỚP -->
 
         <div class="card">
 
@@ -360,10 +432,12 @@
         </div>
 
 
+        <!-- ĐIỂM TRUNG BÌNH -->
+
         <div class="card">
 
             <div class="card-title">
-                Điểm trung bình
+                Điểm trung bình hệ 4
             </div>
 
             <div class="card-value">
@@ -383,6 +457,78 @@
         </div>
 
 
+        <!-- =========================
+             TẢI MÁY CHỦ
+        ========================= -->
+
+        <div class="server-load">
+
+            <h3>
+                Tải máy chủ
+            </h3>
+
+
+            <!-- CPU -->
+
+            <div class="server-item">
+
+                <div class="server-label">
+
+                    <span>
+                        CPU
+                    </span>
+
+                    <strong>
+                        {{ cpu_usage }}%
+                    </strong>
+
+                </div>
+
+
+                <div class="server-bar">
+
+                    <div
+                        class="server-bar-fill"
+                        id="cpuBar"
+                        data-value="{{ cpu_usage }}"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RAM -->
+
+            <div class="server-item">
+
+                <div class="server-label">
+
+                    <span>
+                        RAM
+                    </span>
+
+                    <strong>
+                        {{ ram_usage }} MB
+                    </strong>
+
+                </div>
+
+
+                <div class="server-bar">
+
+                    <div
+                        class="server-bar-fill"
+                        id="ramBar"
+                        data-value="{{ ram_usage }}"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 
@@ -393,7 +539,7 @@
     <div class="chart-grid">
 
 
-        <!-- Sinh viên theo khoa -->
+        <!-- SINH VIÊN THEO KHOA -->
 
         <div class="chart-card">
 
@@ -410,7 +556,7 @@
         </div>
 
 
-        <!-- Phân loại học lực -->
+        <!-- PHÂN LOẠI HỌC LỰC -->
 
         <div class="chart-card">
 
@@ -431,7 +577,7 @@
 
 
     <!-- =========================
-         BIỂU ĐỒ HỌC LỰC
+         BIỂU ĐỒ TỔNG QUAN HỌC LỰC
     ========================= -->
 
     <div class="chart-full">
@@ -455,168 +601,228 @@
 <script>
 
     /* =====================================================
-       BIỂU ĐỒ SINH VIÊN THEO KHOA
+       THANH CPU
     ===================================================== */
 
-    const majorLabels = [
-        {% for item in students_by_major %}
-            "{{ item.major|escapejs }}",
-        {% endfor %}
+    const cpuBar = document.getElementById("cpuBar");
+
+    if (cpuBar) {
+
+        const cpuValue =
+            parseFloat(cpuBar.dataset.value) || 0;
+
+        cpuBar.style.width =
+            Math.min(cpuValue, 100) + "%";
+    }
+
+
+    /* =====================================================
+       THANH RAM
+    ===================================================== */
+
+    const ramBar = document.getElementById("ramBar");
+
+    if (ramBar) {
+
+        const ramValue =
+            parseFloat(ramBar.dataset.value) || 0;
+
+        const ramPercent =
+            Math.min((ramValue / 4096) * 100, 100);
+
+        ramBar.style.width =
+            ramPercent + "%";
+    }
+
+
+    /* =====================================================
+       DỮ LIỆU PHÂN LOẠI HỌC LỰC
+    ===================================================== */
+
+    const gradeLabels = [
+        "Xuất sắc",
+        "Giỏi",
+        "Khá",
+        "Trung bình",
+        "Yếu",
+        "Kém"
     ];
 
+
+    const gradeData = [
+        {{ excellent_count|default:0 }},
+        {{ good_count|default:0 }},
+        {{ fair_count|default:0 }},
+        {{ average_count|default:0 }},
+        {{ weak_count|default:0 }},
+        {{ poor_count|default:0 }}
+    ];
+
+
+    /* =====================================================
+       SINH VIÊN THEO KHOA
+    ===================================================== */
 
     const majorData = [
         {% for item in students_by_major %}
-            {{ item.total }},
+        {
+            major: "{{ item.major|escapejs }}",
+            total: {{ item.total|default:0 }}
+        }{% if not forloop.last %},{% endif %}
         {% endfor %}
     ];
 
 
-    new Chart(
-        document.getElementById("majorChart"),
-        {
-            type: "bar",
+    const majorLabels =
+        majorData.map(item => item.major);
 
-            data: {
+    const majorValues =
+        majorData.map(item => item.total);
 
-                labels: majorLabels,
 
-                datasets: [
-                    {
-                        label: "Sinh viên",
+    /* =====================================================
+       BIỂU ĐỒ SINH VIÊN THEO KHOA
+    ===================================================== */
 
-                        data: majorData
-                    }
-                ]
+    const majorChart =
+        document.getElementById("majorChart");
 
-            },
+    if (majorChart) {
 
-            options: {
+        new Chart(
+            majorChart,
+            {
+                type: "bar",
 
-                responsive: true,
+                data: {
+                    labels: majorLabels,
 
-                maintainAspectRatio: false,
-
-                scales: {
-
-                    y: {
-                        beginAtZero: true,
-
-                        ticks: {
-                            stepSize: 1
+                    datasets: [
+                        {
+                            label: "Số sinh viên",
+                            data: majorValues
                         }
+                    ]
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                stepSize: 1
+                            }
+
+                        }
+
                     }
 
                 }
-
             }
-
-        }
-    );
+        );
+    }
 
 
     /* =====================================================
        BIỂU ĐỒ PHÂN LOẠI HỌC LỰC
     ===================================================== */
 
-    new Chart(
-        document.getElementById("gradeChart"),
-        {
-            type: "doughnut",
+    const gradeChart =
+        document.getElementById("gradeChart");
 
-            data: {
+    if (gradeChart) {
 
-                labels: [
-                    "Giỏi",
-                    "Khá",
-                    "Trung bình",
-                    "Yếu"
-                ],
+        new Chart(
+            gradeChart,
+            {
+                type: "doughnut",
 
-                datasets: [
-                    {
-                        data: [
-                            {{ excellent_count }},
-                            {{ good_count }},
-                            {{ average_count }},
-                            {{ weak_count }}
-                        ]
-                    }
-                ]
+                data: {
 
-            },
+                    labels: gradeLabels,
 
-            options: {
+                    datasets: [
+                        {
+                            data: gradeData
+                        }
+                    ]
 
-                responsive: true,
+                },
 
-                maintainAspectRatio: false
+                options: {
 
+                    responsive: true,
+
+                    maintainAspectRatio: false
+
+                }
             }
-
-        }
-    );
+        );
+    }
 
 
     /* =====================================================
        BIỂU ĐỒ TỔNG QUAN HỌC LỰC
     ===================================================== */
 
-    new Chart(
-        document.getElementById("scoreChart"),
-        {
-            type: "bar",
+    const scoreChart =
+        document.getElementById("scoreChart");
 
-            data: {
+    if (scoreChart) {
 
-                labels: [
-                    "Giỏi",
-                    "Khá",
-                    "Trung bình",
-                    "Yếu"
-                ],
+        new Chart(
+            scoreChart,
+            {
+                type: "bar",
 
-                datasets: [
-                    {
-                        label: "Số sinh viên",
+                data: {
 
-                        data: [
-                            {{ excellent_count }},
-                            {{ good_count }},
-                            {{ average_count }},
-                            {{ weak_count }}
-                        ]
-                    }
-                ]
+                    labels: gradeLabels,
 
-            },
-
-            options: {
-
-                responsive: true,
-
-                maintainAspectRatio: false,
-
-                scales: {
-
-                    y: {
-                        beginAtZero: true,
-
-                        ticks: {
-                            stepSize: 1
+                    datasets: [
+                        {
+                            label: "Số sinh viên",
+                            data: gradeData
                         }
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                stepSize: 1
+                            }
+
+                        }
+
                     }
 
                 }
 
             }
-
-        }
-    );
+        );
+    }
 
 </script>
-
-
 </body>
 
 </html>
